@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Linux System Information & Resource Monitoring Tool · KernelScope</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">K<span>_</span></div>
+        <div><strong>KernelScope</strong><small>SYSTEM OBSERVABILITY</small></div>
+      </div>
+
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="nav-stack">
+        <button class="nav-item active" data-page="overview"><span class="nav-icon">▥</span><span>Overview</span></button>
+        <button class="nav-item" data-page="processes"><span class="nav-icon">≡</span><span>Processes</span></button>
+        <button class="nav-item" data-page="lifecycle"><span class="nav-icon">↗</span><span>Lifecycle</span><em id="lifeBadge">0</em></button>
+        <button class="nav-item" data-page="network"><span class="nav-icon">↔</span><span>Network</span></button>
+      </nav>
+
+      <div class="nav-label explore">EXPLORE</div>
+      <nav class="nav-stack">
+        <button class="nav-item" data-page="lab"><span class="nav-icon">⌘</span><span>Systems lab</span></button>
+        <button class="nav-item" data-page="machines"><span class="nav-icon">▣</span><span>Machines</span></button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-note"><span>⌁</span><div><strong>Built close to the kernel.</strong><small>C · POSIX · Linux</small></div></div>
+      <div class="sidebar-footer"><span>OSSP</span><span>25CS2104E</span></div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Workspace</span><i>/</i><strong id="crumbPage">Overview</strong></div>
+        <div class="top-status"><span>READ-ONLY TELEMETRY</span><b>v1.1</b></div>
+      </header>
+
+      <main class="content">
+        <section class="page active" id="page-overview" data-title="Overview">
+          <div class="page-head">
+            <div><div class="eyebrow">LINUX SYSTEM INFORMATION & RESOURCE MONITORING TOOL</div><h1>System overview.</h1><p>A clear view of your machine, from the kernel up.</p></div>
+            <button class="btn btn-primary open-quick-connect">＋ Add remote machine</button>
+          </div>
+
+          <article class="machine-bar card">
+            <div class="machine-choice">
+              <div class="machine-symbol">▤</div>
+              <div><small>MONITORED MACHINE</small><select id="machineSelect" aria-label="Monitored machine"></select></div>
+            </div>
+            <div class="machine-summary"><strong id="machineHostname">—</strong><span id="machineOs">Waiting for live system data…</span></div>
+            <div class="machine-live"><span id="sourceBadge" class="source-chip">LOCAL</span><b id="liveText"><i></i> LIVE</b><small><span id="lastRefresh">—</span> · <span id="dataAge">—</span></small></div>
+          </article>
+
+          <div class="section-row"><h2>Resource pulse</h2><span>Collected from <code>/proc</code> & <code>/sys</code> · ~1s</span></div>
+          <section class="metric-grid">
+            <article class="metric-card card"><div><span>CPU utilization</span><i>⌁</i></div><strong id="cpuMetric">—</strong><small id="cpuSub">— logical cores</small><div class="bar"><b id="cpuBar"></b></div></article>
+            <article class="metric-card card"><div><span>Memory</span><i>▧</i></div><strong id="ramMetric">—</strong><small id="ramSub">—</small><div class="bar"><b id="ramBar"></b></div></article>
+            <article class="metric-card card"><div><span>Disk usage</span><i>▤</i></div><strong id="diskMetric">—</strong><small id="diskSub">—</small><div class="bar"><b id="diskBar"></b></div></article>
+            <article class="metric-card card"><div><span>Processes</span><i>≡</i></div><strong id="procMetric">—</strong><small id="procSub">—</small><div class="bar neutral"><b></b></div></article>
+            <article class="metric-card card"><div><span>Network receive</span><i>↓</i></div><strong id="rxMetric">—</strong><small>Across non-loopback interfaces</small><div class="bar neutral"><b></b></div></article>
+            <article class="metric-card card"><div><span>Network transmit</span><i>↑</i></div><strong id="txMetric">—</strong><small>Across non-loopback interfaces</small><div class="bar neutral"><b></b></div></article>
+            <article class="metric-card card"><div><span>Swap used</span><i>⇄</i></div><strong id="swapMetric">—</strong><small id="swapSub">—</small><div class="bar"><b id="swapBar"></b></div></article>
+            <article class="metric-card card"><div><span>Load average</span><i>↗</i></div><strong id="loadMetric">—</strong><small id="loadSub">1m · 5m · 15m</small><div class="bar neutral"><b></b></div></article>
+          </section>
+
+          <section class="overview-bottom">
+            <article class="card chart-card"><div class="card-title"><div><h2>Live resource usage</h2><p>Recent measurements · CPU and physical memory</p></div><div class="chart-legend"><span class="legend-cpu">CPU</span><span class="legend-ram">RAM</span></div></div><canvas id="resourceChart"></canvas></article>
+            <article class="card details-card"><div class="card-title"><h2>Machine details</h2><code>/proc</code></div><dl id="machineDetails"><div><dt>Processor</dt><dd id="cpuModel">—</dd></div><div><dt>Distribution</dt><dd id="distribution">—</dd></div><div><dt>Kernel</dt><dd id="kernel">—</dd></div><div><dt>Uptime</dt><dd id="uptime">—</dd></div><div><dt>Threads</dt><dd id="threadCount">—</dd></div><div><dt>Available RAM</dt><dd id="availableRam">—</dd></div><div><dt>IPv4</dt><dd id="ipv4">—</dd></div></dl></article>
+          </section>
+        </section>
+
+        <section class="page" id="page-processes" data-title="Processes">
+          <div class="page-head"><div><div class="eyebrow">PROCESS VISIBILITY</div><h1>Processes & open apps.</h1><p>Real process state, resource use and visible applications.</p></div><div class="head-stat"><strong id="processPageCount">0</strong><span>processes</span></div></div>
+
+          <article class="card open-apps-card">
+            <div class="eyebrow">OPEN APPLICATIONS</div>
+            <div class="card-title"><div><h2>Open applications</h2><p id="appDetectionMode">Detecting applications…</p></div><div class="head-stat compact"><strong id="openAppCount">0</strong><span>open</span></div></div>
+            <div id="webAppSummary" class="web-summary"><span>BROWSER / WEB APP</span><b>Waiting for live application data…</b></div>
+            <div class="table-wrap"><table><thead><tr><th>APPLICATION</th><th>TYPE</th><th>PID</th><th>VISIBLE WINDOW / WEB APP</th><th>CPU %</th><th>RAM MB</th><th>PROCESSES</th></tr></thead><tbody id="applicationsBody"><tr><td colspan="7" class="empty">Waiting for application data…</td></tr></tbody></table></div>
+            <p id="appNote" class="footnote">No application values are simulated.</p>
+          </article>
+
+          <article class="card process-card">
+            <div class="card-title"><div><h2>Live Linux process table</h2><p>Click any PID for the detailed Process Inspector.</p></div><div class="head-stat compact"><strong id="visibleCount">0</strong><span>visible</span></div></div>
+            <div class="toolbar"><label class="searchbox">⌕<input id="processSearch" placeholder="Search PID, process, user, command…"></label><label class="check"><input id="runningOnly" type="checkbox">Running only</label><label class="check"><input id="highCpu" type="checkbox">CPU ≥ 20%</label><label class="check"><input id="highMem" type="checkbox">RAM ≥ 2%</label></div>
+            <div class="table-wrap process-table-wrap"><table id="processTable"><thead><tr><th data-sort="pid">PID</th><th data-sort="ppid">PPID</th><th data-sort="user">USER</th><th data-sort="state">STATE</th><th data-sort="name">PROCESS</th><th data-sort="cpu_percent">CPU %</th><th data-sort="ram_mb">MEMORY MB</th><th data-sort="ram_percent">MEMORY %</th><th data-sort="threads">THREADS</th><th data-sort="start_time">START TIME</th></tr></thead><tbody id="processBody"><tr><td colspan="10" class="empty">Waiting for process data…</td></tr></tbody></table></div>
+          </article>
+        </section>
+
+        <section class="page" id="page-lifecycle" data-title="Lifecycle">
+          <div class="page-head"><div><div class="eyebrow">PROCESS LIFECYCLE</div><h1>Started. Active. Exited.</h1><p>Process instances are tracked by PID + Linux start time to handle PID reuse.</p></div></div>
+          <article class="card lifecycle-card">
+            <div class="lifecycle-top"><div class="tabs" id="lifecycleTabs"><button class="active" data-filter="All">All</button><button data-filter="STARTED">Started</button><button data-filter="ACTIVE">Active</button><button data-filter="EXITED">Exited</button></div><span id="lifeSource">Live source</span></div>
+            <div class="lifecycle-head"><span>TIME</span><span>EVENT</span><span>PID</span><span>PPID</span><span>PROCESS</span><span>CPU</span><span>RAM</span><span>LIFETIME</span></div>
+            <div id="lifecycleList" class="lifecycle-list"><div class="empty-block">Waiting for process transitions…</div></div>
+          </article>
+        </section>
+
+        <section class="page" id="page-network" data-title="Network">
+          <div class="page-head"><div><div class="eyebrow">/SYS/CLASS/NET</div><h1>Network telemetry.</h1><p>Interface state, IPv4 addresses and real kernel byte counters.</p></div></div>
+          <section class="network-totals"><article class="card"><span>Receive rate</span><strong id="netRxRate">—</strong><small id="netRxTotal">— total</small></article><article class="card"><span>Transmit rate</span><strong id="netTxRate">—</strong><small id="netTxTotal">— total</small></article><article class="card"><span>Interfaces</span><strong id="netIfCount">—</strong><small>reported by /sys</small></article></section>
+          <div id="networkList" class="interface-grid"><div class="card empty-block">Waiting for network interfaces…</div></div>
+        </section>
+
+        <section class="page" id="page-lab" data-title="Systems lab">
+          <div class="page-head"><div><div class="eyebrow">OSSP SYSTEMS LAB</div><h1>See the operating system concepts work.</h1><p>Real IPC, system calls, threads, synchronization and kernel interfaces.</p></div></div>
+          <section class="lab-grid">
+            <article class="card demo-card"><div class="eyebrow">PROCESS + IPC DEMONSTRATION</div><h2>fork() → pipe() → waitpid()</h2><p>The child reads <code>/proc/uptime</code> and transfers it to the parent through an anonymous pipe.</p><button id="runDemo" class="btn btn-primary">Run Process / IPC Demo</button><pre id="demoOutput">No demo executed yet.</pre></article>
+            <article class="card concept-intro"><div class="eyebrow">WHY THIS IS OSSP</div><h2>From user space to kernel data.</h2><p>The web dashboard is only the presentation layer. The important monitoring core remains C/POSIX and reads real Linux interfaces directly.</p><div class="stack"><span>C11</span><span>POSIX sockets</span><span>pthreads</span><span>/proc</span><span>/sys</span></div></article>
+          </section>
+          <section class="concept-grid"><article class="card"><b>/proc</b><p>CPU, memory, uptime, process stat/status, cmdline, I/O, maps and FDs.</p></article><article class="card"><b>/sys</b><p>Network interface state and byte counters from the kernel device model.</p></article><article class="card"><b>System calls</b><p><code>open/read/close</code>, sockets, <code>fork</code>, <code>pipe</code>, <code>waitpid</code> and <code>sigaction</code>.</p></article><article class="card"><b>Process management</b><p>PID, PPID, states, creation identity, termination and lifecycle tracking.</p></article><article class="card"><b>Memory</b><p>Physical RAM, swap, virtual memory, resident memory and process address space.</p></article><article class="card"><b>Concurrency</b><p>POSIX collector and HTTP worker threads protected by mutexes.</p></article><article class="card"><b>Signals</b><p>Ctrl+C is handled through <code>sigaction()</code> for clean shutdown.</p></article><article class="card"><b>Remote SSH</b><p>Agentless, authorized monitoring using controlled <code>fork/exec/pipe</code> of OpenSSH.</p></article></section>
+        </section>
+
+        <section class="page" id="page-machines" data-title="Machines">
+          <div class="page-head"><div><div class="eyebrow">MULTI-MACHINE MONITORING</div><h1>Machines.</h1><p>Connect to an already-authorized Linux laptop using only its IPv4 address.</p></div></div>
+          <section class="machine-page-grid">
+            <article class="card quick-card"><div class="quick-icon">↗</div><div class="eyebrow">IP-ONLY QUICK CONNECT</div><h2>Monitor another laptop</h2><p>Enter the remote Linux laptop's IPv4 address. No username, password or port is collected by this page.</p><label class="ip-label">IPv4 address<div class="ip-input"><span>⌁</span><input id="quickIp" inputmode="decimal" autocomplete="off" placeholder="192.168.1.42"><button id="quickConnectBtn" class="btn btn-primary">Connect</button></div></label><div id="quickStatus" class="connect-status">Ready. Backend uses pre-authorized SSH defaults.</div><div class="security-note"><b>One-time prerequisite</b><span>The other laptop must have authorized this monitor's SSH key. After that, this screen needs only the IP address.</span></div></article>
+            <article class="card machine-help"><div class="eyebrow">HOW IT WORKS</div><h2>Browser → C backend → SSH → remote /proc + /sys</h2><div class="flow"><span>Browser</span><i>→</i><span>monitor_web</span><i>→</i><span>SSH</span><i>→</i><span>Linux laptop</span></div><p>The browser never receives an SSH password or private key. Remote commands are fixed by the C backend; the IP is validated before use.</p><code>MONITOR_SSH_USER</code><p class="small">Optional backend environment variable if the remote account name differs from your local Linux username.</p></article>
+          </section>
+          <div class="section-row machines-heading"><h2>Saved machines</h2><span>Selecting one switches the entire dashboard source.</span></div>
+          <div id="machinesGrid" class="machines-grid"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal" id="quickModal" aria-hidden="true">
+    <div class="modal-card"><button class="modal-close" id="closeQuickModal">×</button><div class="eyebrow">IP-ONLY REMOTE CONNECTION</div><h2>Add remote machine</h2><p>Type only the authorized Linux laptop's IPv4 address.</p><label class="ip-label">IPv4 address<div class="ip-input modal-ip"><span>⌁</span><input id="modalIp" inputmode="decimal" autocomplete="off" placeholder="192.168.1.42"></div></label><button id="modalConnectBtn" class="btn btn-primary full">Connect & monitor</button><div id="modalStatus" class="connect-status">No password is sent through the browser.</div></div>
+  </div>
+
+  <div id="drawerBackdrop" class="drawer-backdrop"></div>
+  <aside id="inspector" class="inspector" aria-hidden="true"><div class="inspector-head"><div><div class="eyebrow">PROCESS INSPECTOR</div><h2 id="inspectorTitle">PID</h2></div><button id="closeInspector">×</button></div><div id="inspectorBody" class="inspector-body"></div></aside>
+  <div id="toast" class="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
