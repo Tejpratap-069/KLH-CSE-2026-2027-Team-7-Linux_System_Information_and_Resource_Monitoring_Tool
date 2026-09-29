@@ -1,0 +1,8 @@
+*.o
+system_monitor
+monitor_web
+config/machines.conf
+data/*.csv
+data/*.log
+!data/.gitkeep
+.vscode/
