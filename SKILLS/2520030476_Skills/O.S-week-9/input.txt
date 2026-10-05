@@ -1,0 +1,2 @@
+Hello Operating System
+This is input redirectionHello, this is a sample file.
